@@ -22,8 +22,9 @@ resource "digitalocean_droplet" "web" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt-get update",
-      "sudo apt-get -y install nginx",
+      "apt-get update",
+      "apt-get -y install nginx",
+      "mkdir -p /var/www/demo.noodlemilkhotel.com/",
     ]
 
     connection {
@@ -34,7 +35,6 @@ resource "digitalocean_droplet" "web" {
 
   }
 
-  /*
   provisioner "file" {
     source      = "www/index.html"
     destination = "/var/www/demo.noodlemilkhotel.com/index.html"
@@ -48,7 +48,7 @@ resource "digitalocean_droplet" "web" {
 
   provisioner "file" {
     source      = "www/demo.noodlemilkhotel.com"
-    destination = "/etc/nginx/sites-enabled"
+    destination = "/etc/nginx/sites-enabled/demo.noodlemilkhotel.com"
 
     connection {
       type        = "ssh"
@@ -56,7 +56,6 @@ resource "digitalocean_droplet" "web" {
       host        = "${digitalocean_droplet.web.ipv4_address}"
     }
   }
-  */
 
 
 }
