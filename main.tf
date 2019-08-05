@@ -42,6 +42,14 @@ resource "digitalocean_droplet" "puppet_master" {
   # monitoring = true
   ssh_keys = [digitalocean_ssh_key.terraform_key.id]
 
+  provisioner "remote-exec" {
+
+    connection {
+      type        = "ssh"
+      host        = "${digitalocean_droplet.web.ipv4_address}"
+      private_key = "${file(var.ssh_root_privkey_path)}"
+    }
+  }
 }
 
 resource "digitalocean_droplet" "web" {
@@ -54,8 +62,19 @@ resource "digitalocean_droplet" "web" {
 
   provisioner "puppet" {
     server      = "puppet.${var.demo_domain}"
+    server_user = "root"
     open_source = false
     environment = "${var.deployment_environment}"
+    extension_requests = {
+      pp_role = "web"
+    }
+
+    connection {
+      type        = "ssh"
+      host        = "${digitalocean_droplet.web.ipv4_address}"
+      private_key = "${file(var.ssh_root_privkey_path)}"
+    }
+
   }
 }
 
